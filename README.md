@@ -4,9 +4,9 @@
 
 
 
-[Libraries](https://github.com/BlevBot/openlibraryloader/main/OpenLibraryLoader.lua/BuiltInLibraries.lua)
+[Libraries](https://github.com/BlevBot/openlibraryloader/blob/main/OpenLibraryLoader.lua/BuiltInLibraries.lua)
 
-[Documentation](https://github.com/BlevBot/openlibraryloader/main/README.md#Documentation)
+[Documentation](https://github.com/BlevBot/openlibraryloader/blob/main/README.md#Documentation)
 
 
 # Documentation
