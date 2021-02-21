@@ -8,7 +8,7 @@ OpenLibraryLoader can be used on both client and server to require installed mod
 
 [Documentation](https://github.com/BlevinsWasTaken/openlibraryloader/blob/main/README.md#Documentation)
 
-[Library Index](https://github.com/BlevinsWasTaken/openlibraryloader/blob/main/LibraryIndex.lua)
+[Library Index](https://github.com/BlevinsWasTaken/openlibraryloader/blob/main/OpenLibraryLoader/LibraryIndex.lua)
 
 # Installation
 
