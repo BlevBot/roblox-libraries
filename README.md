@@ -2,7 +2,7 @@
 
 *A Roblox package designed to manage and organise module imports and provide an open library index.*
 
-OpenLibraryLoader can be used on both client and server to require
+OpenLibraryLoader can be used on both client and server to require installed modules and *Libraries* by name. It creates two simple globals in scripts requiring it with one line of code. Modules are stored under their *Keys* in a folder in ReplicatedStorage and ServerStorage, and can be removed and inserted directly from the explorer.
 
 [Installation](https://github.com/BlevinsWasTaken/openlibraryloader/blob/main/README.md#Installation)
 
