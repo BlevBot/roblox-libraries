@@ -4,25 +4,25 @@ local RunService = game:GetService('RunService')
 local InsertService = game:GetService('InsertService')
 
 local Env = getfenv(1)
-Env['getModule'] = Env['require']
+local getModule = Env['require']
 
 local RepFolder = nil
 local Folder = nil
-local BuiltInLibraries = getModule(script.Parent.BuiltInLibraries)
+local LibraryIndex = getModule(script.Parent.LibraryIndex)
 
-if not RepStorage:FindFirstChild('Libraries') then
+if not RepStorage:FindFirstChild('Modules') then
 	RepFolder = Instance.new('Folder')
-	RepFolder.Name = 'Libraries'
+	RepFolder.Name = 'Modules'
 	RepFolder.Parent = RepStorage
 end
-if not SSService:FindFirstChild('Libraries') then
+if not SSService:FindFirstChild('Modules') then
 	Folder = Instance.new('Folder')
-	Folder.Name = 'Libraries'
+	Folder.Name = 'Modules'
 	Folder.Parent = SSService
 end
 
-RepFolder = RepStorage:FindFirstChild('Libraries')
-Folder = SSService:FindFirstChild('Libraries')
+RepFolder = RepStorage:FindFirstChild('Modules')
+Folder = SSService:FindFirstChild('Modules')
 
 function install(ID, Key, Replicated)
 	assert(RunService:IsServer(), 'Install cannot be called on a client')
@@ -41,9 +41,9 @@ function install(ID, Key, Replicated)
 	assert(Module:FindFirstChild('MainModule'), 'Install model must include MainModule')
 	assert(type(Key) == 'string', 'Install Key must be a string')
 	local FinalKey = string.lower(Key)
-	assert(not RepFolder:FindFirstChild(FinalKey) and not Folder:FindFirstChild(FinalKey) and not BuiltInLibraries[FinalKey], 'Install Key is already filled')
+	assert(not RepFolder:FindFirstChild(FinalKey) and not Folder:FindFirstChild(FinalKey) and not LibraryIndex[FinalKey], 'Install Key is already filled')
 	local ScriptEnv = getfenv(2)
-	assert(not ScriptEnv[Key], 'Install Key overlaps global library, use Require As to replace')
+	assert(not ScriptEnv[Key], 'Install Key overlaps global, use Require As to replace')
 	assert(Replicated == nil or type(Replicated) == 'boolean', 'Install Replicated must be a boolean')
 	
 	Module.Name = FinalKey
@@ -69,15 +69,25 @@ function require(Module, Alias)
 	end
 	local ScriptEnv = getfenv(2)
 	if type(Module) == 'string' then
-		local Module = BuiltInLibraries[Module] or RepFolder:FindFirstChild(Module).MainModule or Folder:FindFirstChild(Module).MainModule or nil
+		local Module = RepFolder:FindFirstChild(Module).MainModule or Folder:FindFirstChild(Module).MainModule or nil
+		assert(Module ~= nil or LibraryIndex[Module], 'Require cannot get Library on client')
+		if Module == nil and LibraryIndex[Module] then
+			Module = LibraryIndex[Module]
+		end
 		assert(Module ~= nil, 'Require Module Key does not exist')
+		local OldEnv = getfenv(1)
 		Module = getModule(Module)
+		if OldEnv ~= getfenv(1) then
+			ScriptEnv = getfenv(1)
+			Env = OldEnv
+		end
 		ScriptEnv[Alias] = Module
 		return Module
 	elseif type(Module) == 'number' then
 		assert(RunService:IsServer(), 'Require cannot get module by ID on a client')
 		assert(Module == math.ceil(Module), 'Require module ID must be an integer')
 		local Module = nil
+		local OldEnv = getfenv(1)
 		local Success, Error = pcall(function()
 			Module = getModule(Module)
 		end)
@@ -86,11 +96,21 @@ function require(Module, Alias)
 			print(Error)
 			error('Unchecked error, contact OpenLibraryLoader developer')
 		end
+		if OldEnv ~= getfenv(1) then
+			ScriptEnv = getfenv(1)
+			Env = OldEnv
+		end
 		ScriptEnv[Alias] = Module
 		return Module
 	elseif typeof(Module) == 'Instance' then
+		local OldEnv = getfenv(1)
 		local Module = getModule(Module)
+		if OldEnv ~= getfenv(1) then
+			ScriptEnv = getfenv(1)
+			Env = OldEnv
+		end
 		ScriptEnv[Alias] = Module
+		print(getfenv(1))
 		return Module
 	end
 end
