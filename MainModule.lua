@@ -110,7 +110,6 @@ function require(Module, Alias)
 			Env = OldEnv
 		end
 		ScriptEnv[Alias] = Module
-		print(getfenv(1))
 		return Module
 	end
 end
