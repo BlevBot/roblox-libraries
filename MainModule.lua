@@ -43,7 +43,7 @@ function install(ID, Key, Replicated)
 	local FinalKey = string.lower(Key)
 	assert(not RepFolder:FindFirstChild(FinalKey) and not Folder:FindFirstChild(FinalKey) and not LibraryIndex[FinalKey], 'Install Key is already filled')
 	local ScriptEnv = getfenv(2)
-	assert(not ScriptEnv[Key], 'Install Key overlaps global, use Require As to replace')
+	assert(not ScriptEnv[Key], 'Install Key overlaps global, use Require Alias to replace')
 	assert(Replicated == nil or type(Replicated) == 'boolean', 'Install Replicated must be a boolean')
 	
 	Module.Name = FinalKey
@@ -62,34 +62,38 @@ end
 function require(Module, Alias)
 	assert(type(Module) == 'string' or type(Module) == 'number' or (typeof(Module) == 'Instance' and Module.ClassName == 'ModuleScript'), 'Require must include a module or a Key')
 	assert(Alias == nil or type(Alias) == 'string', 'Require Alias must be a string')
-	assert(Alias ~= nil or type(Module) == 'number', 'Require must include Alias when Module is by ID')
-	assert(Alias ~= nil or typeof(Module) == 'Instance', 'Require must include Alias when Module is by Instance')
+	assert(Alias ~= nil or type(Module) ~= 'number', 'Require must include Alias when Module is by ID')
+	assert(Alias ~= nil or typeof(Module) ~= 'Instance', 'Require must include Alias when Module is by Instance')
 	if Alias == nil then
 		Alias = Module
 	end
 	local ScriptEnv = getfenv(2)
 	if type(Module) == 'string' then
-		local Module = RepFolder:FindFirstChild(Module).MainModule or Folder:FindFirstChild(Module).MainModule or nil
-		assert(Module ~= nil or LibraryIndex[Module], 'Require cannot get Library on client')
-		if Module == nil and LibraryIndex[Module] then
-			Module = LibraryIndex[Module]
+		
+		local FinalModule = RepFolder:FindFirstChild(Module) or Folder:FindFirstChild(Module) or nil
+		if FinalModule ~= nil then
+			FinalModule = FinalModule:FindFirstChild('MainModule')
 		end
-		assert(Module ~= nil, 'Require Module Key does not exist')
+		assert(FinalModule ~= nil or not LibraryIndex[Module] or RunService:IsServer(), 'Require cannot get Library on client')
+		if FinalModule == nil and LibraryIndex[Module] then
+			FinalModule = LibraryIndex[Module]
+		end
+		assert(FinalModule ~= nil, 'Require Module Key does not exist')
 		local OldEnv = getfenv(1)
-		Module = getModule(Module)
+		FinalModule = getModule(FinalModule)
 		if OldEnv ~= getfenv(1) then
 			ScriptEnv = getfenv(1)
 			Env = OldEnv
 		end
-		ScriptEnv[Alias] = Module
-		return Module
+		ScriptEnv[Alias] = FinalModule
+		return FinalModule
 	elseif type(Module) == 'number' then
 		assert(RunService:IsServer(), 'Require cannot get module by ID on a client')
 		assert(Module == math.ceil(Module), 'Require module ID must be an integer')
-		local Module = nil
+		local FinalModule = nil
 		local OldEnv = getfenv(1)
 		local Success, Error = pcall(function()
-			Module = getModule(Module)
+			FinalModule = getModule(FinalModule)
 		end)
 		assert(Success or not string.find(Error, 'Is the asset id correct and is the asset type "Model"?'), 'Require Module ID does not exist')
 		if not Success then
@@ -100,17 +104,17 @@ function require(Module, Alias)
 			ScriptEnv = getfenv(1)
 			Env = OldEnv
 		end
-		ScriptEnv[Alias] = Module
-		return Module
+		ScriptEnv[Alias] = FinalModule
+		return FinalModule
 	elseif typeof(Module) == 'Instance' then
 		local OldEnv = getfenv(1)
-		local Module = getModule(Module)
+		local FinalModule = getModule(Module)
 		if OldEnv ~= getfenv(1) then
 			ScriptEnv = getfenv(1)
 			Env = OldEnv
 		end
-		ScriptEnv[Alias] = Module
-		return Module
+		ScriptEnv[Alias] = FinalModule
+		return FinalModule
 	end
 end
 
