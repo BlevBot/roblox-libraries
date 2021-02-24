@@ -22,18 +22,42 @@ require(6423687833)()
 local install = require(6423687833)()
 ```
 
-- If you want to easily inspect the source, insert (https://www.roblox.com/library/6423687833) into ReplicatedScriptService and require the MainModule:
+- If you want to easily inspect the source, insert [the model](https://www.roblox.com/library/6423687833) into ReplicatedScriptService and require the MainModule:
 ```
 require(game:GetService('ReplicatedScriptService').OpenLibraryLoader.MainModule)()
 ```
 
-- If you're a power user and want the very latest commit, use [RepoToRoblox](https://devforum.roblox.com/t/1000272) to clone this repository into ReplicatedScriptService with trim filetype on.
+- If you're a power user and demand the very latest commit, use [RepoToRoblox](https://devforum.roblox.com/t/1000272) to clone this repository into ReplicatedScriptService with trim filetype on.
 
 # Documentation
 
 **Functions**
 
 ---
+
+- **install**
+
+*Imports an owned module under a Key for either server-only or replicated use.*
+
+Arguments:
+
+>ID \<integer> : A model ID which contains a main module and is owned by the place owner.
+
+>Key \<string> : The *Key* to be used later for requiring and referencing the module.
+
+>Replicated \<boolean> : Optional boolean deciding whether to allow client access to the installed module, defaults to true.
+
+- **register**
+
+*Clones a ModuleScript under a Key for either server-only or replicated use.*
+
+Arguments:
+
+>Module \<integer> : The ModuleScript Instance in the place.
+
+>Key \<string> : The *Key* to be used later for requiring and referencing the module.
+
+>Replicated \<boolean> : Optional boolean deciding whether to allow client access to the installed module, defaults to true.
 
 - **require**
 
@@ -44,16 +68,3 @@ Arguments:
 >Module \<Variant> : Either a reference to a module like the regular *require* function argument, or a *Key* used to store a module or require a *Library*.
 
 >Alias \<string> : An optional name to reference the object by in the script, defaults to the *Key*.
-
-
-- **install**
-
-*Imports an owned module under a Key for either server-only or replicated use.*
-
-Arguments:
-
->ID \<integer> : A model ID which contains a main module and is owned by the place owner.
-
->Key \<string> : The *Key* to be used later for requiring and referencing module.
-
->Replicated \<boolean> : Optional boolean deciding whether to allow client access to the installed module, defaults to true.
