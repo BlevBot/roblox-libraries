@@ -101,6 +101,9 @@ function require(Module, Alias)
 		FinalModule = getModule(FinalModule)
 		if OldEnv ~= getfenv(1) then
 			ScriptEnv = getfenv(1)
+			ScriptEnv['install'] = install
+			ScriptEnv['require'] = require
+			ScriptEnv['register'] = register
 			Env = OldEnv
 		end
 		ScriptEnv[Alias] = FinalModule
@@ -120,6 +123,9 @@ function require(Module, Alias)
 		end
 		if OldEnv ~= getfenv(1) then
 			ScriptEnv = getfenv(1)
+			ScriptEnv['install'] = install
+			ScriptEnv['require'] = require
+			ScriptEnv['register'] = register
 			Env = OldEnv
 		end
 		ScriptEnv[Alias] = FinalModule
@@ -129,6 +135,9 @@ function require(Module, Alias)
 		local FinalModule = getModule(Module)
 		if OldEnv ~= getfenv(1) then
 			ScriptEnv = getfenv(1)
+			ScriptEnv['install'] = install
+			ScriptEnv['require'] = require
+			ScriptEnv['register'] = register
 			Env = OldEnv
 		end
 		ScriptEnv[Alias] = FinalModule
@@ -140,6 +149,7 @@ local function setup()
 	local ScriptEnv = getfenv(2)
 	ScriptEnv['install'] = install
 	ScriptEnv['require'] = require
+	ScriptEnv['register'] = register
 	return install
 end
 
