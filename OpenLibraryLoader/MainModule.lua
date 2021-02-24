@@ -24,6 +24,24 @@ end
 RepFolder = RepStorage:FindFirstChild('Modules')
 Folder = SSService:FindFirstChild('Modules')
 
+function register(Module, Key, Replicated)
+	assert(typeof(Module) == 'Instance' and Module.ClassName == 'ModuleScript', 'Register Module must be a ModuleScript')
+	assert(type(Key) == 'string', 'Register Key must be a string')
+	local FinalKey = string.lower(Key)
+	assert(not RepFolder:FindFirstChild(FinalKey) and not Folder:FindFirstChild(FinalKey) and not LibraryIndex[FinalKey], 'Register Key is already filled')
+	local ScriptEnv = getfenv(2)
+	assert(not ScriptEnv[Key], 'Register Key overlaps global, use Require with Alias to replace')
+	assert(Replicated == nil or type(Replicated) == 'boolean', 'Register Replicated must be a boolean')
+	
+	local NewModule = Module:Clone()
+	NewModule.Name = FinalKey
+	if Replicated == false then
+		NewModule.Parent = Folder
+	else
+		NewModule.Parent = RepFolder
+	end
+end
+
 function install(ID, Key, Replicated)
 	assert(RunService:IsServer(), 'Install cannot be called on a client')
 	assert(type(ID) == 'number' and ID == math.ceil(ID), 'Install ID must be an integer')
@@ -43,7 +61,7 @@ function install(ID, Key, Replicated)
 	local FinalKey = string.lower(Key)
 	assert(not RepFolder:FindFirstChild(FinalKey) and not Folder:FindFirstChild(FinalKey) and not LibraryIndex[FinalKey], 'Install Key is already filled')
 	local ScriptEnv = getfenv(2)
-	assert(not ScriptEnv[Key], 'Install Key overlaps global, use Require Alias to replace')
+	assert(not ScriptEnv[Key], 'Install Key overlaps global, use Require with Alias to replace')
 	assert(Replicated == nil or type(Replicated) == 'boolean', 'Install Replicated must be a boolean')
 	
 	Module.Name = FinalKey
